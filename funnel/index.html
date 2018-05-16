@@ -23,6 +23,52 @@
       <script type="text/javascript">
       var total = [];
       function init() {
+          mySettings = {
+              width:500,
+              height:800,
+              data:{
+                  model:
+                      [
+                      {label:"Bitcoin Cash"},
+                      {label:"Bitcoin Core"},
+                      ],
+                  strata:[
+                      [
+                      {initValue: 0, label: "Strata 1 Col A"},
+                      ],[
+                      {initValue: 0, label: "Strata 1 Col B"}
+                      ]
+                          ],
+                  stream: {
+                      provider:'generator',
+                      refresh:10000/6
+                  }
+              },
+              sedimentation:{
+                  aggregation:{
+                      height:50
+                  },
+                  token:{
+                      size:{original:5,minimum:3}
+                  },
+                  suspension:{
+                      decay:{power:0}
+                  }
+              },
+              chart:{
+                  width:500,
+                  height:800,
+                  wallColor:"rgba(230,230,230,0.5)",
+                  type:'StackedAreaChart',
+                  spacer:2,
+                  radius:50,
+              },
+              options:{
+                  layout:false
+              }
+          }
+          var myBarChart = $("#barChart").vs(mySettings).data('visualSedimentation');
+
           initWebSockets()
       }
 
