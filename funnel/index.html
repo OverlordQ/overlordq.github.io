@@ -46,6 +46,7 @@
                 for (var o = 0, l = 0; l < n.x.out.length; l++) {
                     o += n.x.out[l].value;
                 }
+		console.log("O: " + o);
                 n.amount = o / 1e8;
                 total.push(n.amount);
                 for (var a = 0, s = 0; s < total.length; ++s) {
@@ -56,6 +57,7 @@
         }
       }
 
+      init()
       </script>
   </body>   
 </html>
