@@ -21,9 +21,41 @@
     
       <!-- Create my visual sedimentation -->
       <script type="text/javascript">
-      
-        var barChart = $("#myDemo").vs().data('visualSedimentation');
-      
+      var total = [];
+      function init() {
+          initWebSockets()
+      }
+
+      function initWebSockets() {
+          function addCash(t) {
+            //
+          }
+        var cashSocket = new WebSocket("wss://ws.blockchain.info/bch/inv");
+        cashSocket.onopen = function() {
+            console.log("BCH Connected");
+            cashSocket.send(JSON.stringify({
+                op: "unconfirmed_sub"
+            })),
+            cashSocket.send(JSON.stringify({
+                op: "blocks_sub"
+            }))
+        },
+        cashSocket.onmessage = function(e) {
+            var n = JSON.parse(e.data);
+            if ("utx" == n.op) {
+                for (var o = 0, l = 0; l < n.x.out.length; l++) {
+                    o += n.x.out[l].value;
+                }
+                n.amount = o / 1e8;
+                total.push(n.amount);
+                for (var a = 0, s = 0; s < total.length; ++s) {
+                    a += total[s] << 0;
+                };
+                console.log("A: " + a);
+            }
+        }
+      }
+
       </script>
   </body>   
 </html>
