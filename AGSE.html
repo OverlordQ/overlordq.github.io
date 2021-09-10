@@ -1,0 +1,478 @@
+
+<html>
+    <head>
+        <script>
+            function insertAfter(newElement,targetElement) {
+    // target is what you want it to go after. Look for this elements parent.
+    var parent = targetElement.parentNode;
+
+    // if the parents lastchild is the targetElement...
+    if (parent.lastChild == targetElement) {
+        // add the newElement after the target element.
+        parent.appendChild(newElement);
+    } else {
+        // else the target has siblings, insert the new element between the target and it's next sibling.
+        parent.insertBefore(newElement, targetElement.nextSibling);
+    }
+}
+            const labelNums = ["Antimatter","Total Antimatter","Infinity Power","Time Shards","Time Shard Threshold","Tickspeed Upgrades from TDs","Infinity Points","1/10 IPs","Eternity Points","First Dimensions Sacrificed","Soft Resets","Galaxies","Infinities","1/5 Infinities","Banked Infinities","Eternities","Tickspeed","Tickspeed Cost","Tickspeed Cost Increase","Tickspeed Cost Increase Increase","Tickspeed Cost Increase Increase Decrease Cost","Dimension Cost Increase Increase","Dimension Cost Increase Increase Decrease Cost","Time Played","Time Played in Infinity","Fastest Infinity","Time Played In Eternity","Fastest Eternity","Challenge 2 power","Challenge 3 power","Matter","Infinity Challenges Unlocked","Challenge Goal","Infinity Challenge 4 tier","Infinity Challenge 3 Reward","IP Multiplier","IP Multiplier Cost","EP Multiplier","EP Multiplier Cost","Passive IP Gain","Passive IP Gain Cost","EC target","Unlocked EC","Current EC","EC8 ID upgrades remaining","EC8 Replicanti upgrades remaining","Last Save Time","Version","Spreading Cancer Progress","Auto-Sacrifice Threshold","Highest IP/min in a Fully Automatic Infinity","Fastest Fully Automatic Infinity"]
+            const varNames =  ["money","totalmoney","infinityPower","timeShards","tickThreshold","totalTickGained",                                "infinityPoints","partInfinityPoint","infinitiedBank","eternityPoints","sacrificed","resets","galaxies","infinitied","partInfinitied","eternities",                  "tickspeed","tickSpeedCost","tickspeedMultiplier",     "tickSpeedMultDecrease","tickSpeedMultDecreaseCost","dimensionMultDecrease","dimensionMultDecreaseCost",                                                                "totalTimePlayed","thisInfinityTime","bestInfinityTime","thisEternity","bestEternity",                  "chall2Pow","chall3Pow","matter",                "postChallUnlocked","challengeTarget","postC4Tier","postC3Reward",                                        "infMult","infMultCost","epmult","epmultCost",                            "offlineProd","offlineProdCost",         "eternityChallGoal","eternityChallUnlocked","currentEternityChall","eterc8ids","eterc8repl",           "lastUpdate","version","spreadingCancer","autoSacrifice","autoIP","autoTime"]
+            const tierNames = ["first","second","third","fourth","fifth","sixth","seventh","eight"]
+            const dimVals = ["Cost","Amount","Pow","Bought"]
+            const iDimVals = ["cost","baseAmount","amount","power"]
+            const tDimVals = ["cost","amount","bought","power"]
+            const challOrder = ["",2,3,8,6,10,9,11,5,4,12,7]
+            const ABVals = ["cost","interval","priority","ticks","bulk"]
+            const labelRep = ["Amount","Chance","Chance Cost","Interval","Interval Cost","Max Galaxies","Galaxy Cost","Current Galaxies"]
+            const labelRepAuto = ["Chance","Interval","Galaxy"]
+            const repNames = ["amount","chance","chanceCost","interval","intervalCost","gal","galCost","galaxies"]
+            const labelStudy = ["Theorems","Antimatter Cost","Infinity Point Cost","Eternity Point Cost"]
+            const studyNames = ["theorem","amcost","ipcost","epcost"]
+            const studyId = [11, 21, 22, 33, 31, 32, 41, 42, 51, 61, 62, 71, 72, 73, 81, 82 ,83, 91, 92, 93, 101, 102, 103, 111, 121, 122, 123, 131, 132, 133, 141, 142, 143, 151, 161, 162, 171, 181, 191, 192, 193, 201, 211, 212, 213, 214,221,222,223,224,225,226,227,228,231,232,233,234]
+            let file;
+
+            function init() {
+                let carry = document.getElementById("base")
+                for (let i=0;i<varNames.length;i++) { //main numerical values
+                    const label = document.createElement("div")
+                    label.innerHTML = labelNums[i]
+                    const field = document.createElement("input")
+                    field.type = "text"
+                    field.id = "b"+i
+                    field.style.width = "95%"
+                    insertAfter(label,carry)
+                    insertAfter(field,label)
+                    carry = field
+                }
+                for (let i=0;i<8;i++) {
+                    let row = document.getElementById("dt").insertRow(i+1)
+                    row.insertCell(0).innerHTML = "<b>Dimension " + (i+1) + "</b>"
+                    for (let j=0;j<5;j++) { //normal dimensions
+                        const field = document.createElement("input")
+                        field.type = "text"
+                        field.id = j==4? "dc"+i :"d"+i+j
+                        row.insertCell(j+1).appendChild(field)
+                    }
+
+                    row = document.getElementById("dit").insertRow(i+1)
+                    row.insertCell(0).innerHTML = "<b>Infinity Dimension " + (i+1) + "</b>"
+                    let field2 = document.createElement("input")
+                    field2.type = "checkbox"
+                    field2.id = "diu"+i
+                    row.insertCell(1).appendChild(field2)
+                    for (let j=0;j<4;j++) { //time dimensions
+                        const field = document.createElement("input")
+                        field.type = "text"
+                        field.id = "di"+i+j
+                        row.insertCell(j+2).appendChild(field)
+                    }
+                    field2 = document.createElement("input")
+                    field2.type = "checkbox"
+                    field2.id = "dia"+i
+                    row.insertCell(6).appendChild(field2)
+                }
+                for (let i=0;i<8;i++) {
+                    const row = document.getElementById("dtt").insertRow(i+1)
+                    row.insertCell(0).innerHTML = "<b>Time Dimension " + (i+1) + "</b>"
+                    for (let j=0;j<4;j++) {
+                        const field = document.createElement("input")
+                        field.type = "text"
+                        field.id = "dt"+i+j
+                        row.insertCell(j+1).appendChild(field)
+                    }
+                }
+                carry = document.getElementById("base2")
+                for (let i=0;i<13;i++) { //achievements
+                    for (let j=0;j<8;j++) {
+                        const ach = document.createElement("input")
+                        ach.type = "checkbox"
+                        ach.id = "a"+i+j
+                        insertAfter(ach,carry)
+                        carry = ach
+                    }
+                    const br = document.createElement("br")
+                    insertAfter(br,carry)
+                    carry = br
+                }
+                for (let i=0;i<19;i++) { //challenges
+                    const row = document.getElementById("ct").insertRow(i+1)
+                    row.insertCell(0).innerHTML = "<b>"+(i<11?"Challenge " + (i+2):"Infinity Challenge " +(i-10)) + "</b>"
+                    const check = document.createElement("input")
+                    check.type = "checkbox"
+                    check.id = "cf"+i
+                    row.insertCell(1).appendChild(check)
+                    const field = document.createElement("input")
+                    field.type = "text"
+                    field.id = "ct"+i
+                    row.insertCell(2).appendChild(field)
+                }
+                for (let i=0;i<12;i++) { //autobuyers
+                    const row = document.getElementById("cat").insertRow(i+1)
+                    switch(i) {
+                        case 8: row.insertCell(0).innerHTML = "<b>Tickspeed Autobuyer</b>"; break;
+                        case 9: row.insertCell(0).innerHTML = "<b>Dimension Boost Autobuyer</b>"; break;
+                        case 10: row.insertCell(0).innerHTML = "<b>Galaxy Autobuyer</b>"; break;
+                        case 11: row.insertCell(0).innerHTML = "<b>Crunch Autobuyer</b>"; break;
+                        default: row.insertCell(0).innerHTML = "<b> Dimension " +(i+1)+ " Autobuyer</b>"; break;
+                    }
+                    for (let j=0;j<2;j++) {
+                    const field2 = document.createElement("input")
+                    field2.type = "checkbox"
+                    field2.id = "cac"+i+j
+                    row.insertCell(j+1).appendChild(field2)
+                    }
+                    for (let j=0;j<5;j++) {
+                        if (i==8 && j==4) {
+                            row.insertCell(7).innerHTML = "N/A"
+                            break;
+                        }
+                        const field = document.createElement("input")
+                        field.type = "text"
+                        field.id = "ca"+i+j
+                        row.insertCell(j+3).appendChild(field)
+                    }
+                    if (i<9) {
+                        const field2 = document.createElement("input")
+                        field2.type = "checkbox"
+                        field2.id = "cam"+i
+                        row.insertCell(8).innerHTML = "Buy Multiple?"
+                        row.cells[8].appendChild(field2)
+                    }
+                }
+                carry = document.createElement("input")
+                carry.type = "number"
+                carry.id = "cam9"
+                carry.min = "0"
+                document.getElementById("cat").rows[10].insertCell(8).innerHTML = "Over X Galaxies:"
+                document.getElementById("cat").rows[10].cells[8].appendChild(carry)
+                document.getElementById("cat").rows[12].insertCell(8).innerHTML = "Auto crunch mode:"
+                document.getElementById("cat").rows[12].cells[8].appendChild(document.getElementById("cam11"));
+
+                carry = document.getElementById("rce")
+                for (let i=0;i<repNames.length;i++) { //replicanti
+                    const label = document.createElement("div")
+                    label.innerHTML = labelRep[i]
+                    const field = document.createElement("input")
+                    field.type = "text"
+                    field.id = "r"+i
+                    field.style.width = "95%"
+                    insertAfter(label,carry)
+                    insertAfter(field,label)
+                    carry = field
+                }
+                carry =  document.getElementById("base4")
+                for (let i=0;i<3;i++) {
+                    const label = document.createElement("span")
+                    label.innerHTML = labelRepAuto[i] + " Autobuyer"
+                    const field = document.createElement("input")
+                    field.type = "checkbox"
+                    field.id = "rc"+i
+                    insertAfter(label,carry)
+                    insertAfter(field,label)
+                    carry = field
+                }
+                for (let i=0;i<4;i++) { //Time Studies
+                    const label = document.createElement("div")
+                    label.innerHTML = labelStudy[i]
+                    const field = document.createElement("input")
+                    field.type = "text"
+                    field.id = "bt"+i
+                    field.style.width = "95%"
+                    insertAfter(label,carry)
+                    insertAfter(field,label)
+                    carry = field
+                }
+                carry =  document.getElementById("base3")
+                for (let i=0;i<studyId.length;i++) {
+                    const label = document.createElement("span")
+                    label.innerHTML = studyId[i]
+                    const field = document.createElement("input")
+                    field.type = "checkbox"
+                    field.id = "bts"+i
+                    insertAfter(label,carry)
+                    insertAfter(field,label)
+                    carry = field 
+                }
+                carry = document.getElementById("base5")
+                for (let i=1;i<=12;i++) { //ECs
+                    const field = document.createElement("input")
+                    field.type = "number"
+                    field.min = 0
+                    field.max = 5
+                    field.id = "ce"+i
+                    insertAfter(field,carry)
+                    carry = field
+                }
+                for (let i=0;i<10;i++) { //last 10 infs
+                    const row = document.getElementById("spit").insertRow(i+1)
+                    row.insertCell(0).innerHTML = "<b>"+(i+1)+" infinities ago</b>"
+                    const ip = document.createElement("input")
+                    ip.id = "spii"+i
+                    row.insertCell(1).appendChild(ip)
+                    const time = document.createElement("input")
+                    time.id = "spid"+i
+                    row.insertCell(2).appendChild(time)
+                }
+                for (let i=0;i<10;i++) { //last 10 eternities
+                    const row = document.getElementById("spet").insertRow(i+1)
+                    row.insertCell(0).innerHTML = "<b>"+(i+1)+" eternities ago</b>"
+                    const ep = document.createElement("input")
+                    ep.id = "spee"+i
+                    row.insertCell(1).appendChild(ep)
+                    const time = document.createElement("input")
+                    time.id = "sped"+i
+                    row.insertCell(2).appendChild(time)
+                }
+
+                //initializing values.
+                file = localStorage.getItem("ADeditor")
+                if (file) file = JSON.parse(atob(file))
+                else {
+                    file = JSON.parse(atob("eyJtb25leSI6IjEwIiwidGlja1NwZWVkQ29zdCI6IjEwMDAiLCJ0aWNrc3BlZWQiOiIxMDAwIiwiZmlyc3RDb3N0IjoiMTAiLCJzZWNvbmRDb3N0IjoiMTAwIiwidGhpcmRDb3N0IjoiMTAwMDAiLCJmb3VydGhDb3N0IjoiMTAwMDAwMCIsImZpZnRoQ29zdCI6IjEwMDAwMDAwMDAiLCJzaXh0aENvc3QiOiIxMDAwMDAwMDAwMDAwMCIsInNldmVudGhDb3N0IjoiMTAwMDAwMDAwMDAwMDAwMDAwMCIsImVpZ2h0Q29zdCI6IjFlKzI0IiwiZmlyc3RBbW91bnQiOiIwIiwic2Vjb25kQW1vdW50IjoiMCIsInRoaXJkQW1vdW50IjoiMCIsImZvdXJ0aEFtb3VudCI6IjAiLCJmaXJzdEJvdWdodCI6MCwic2Vjb25kQm91Z2h0IjowLCJ0aGlyZEJvdWdodCI6MCwiZm91cnRoQm91Z2h0IjowLCJmaWZ0aEFtb3VudCI6IjAiLCJzaXh0aEFtb3VudCI6IjAiLCJzZXZlbnRoQW1vdW50IjoiMCIsImVpZ2h0QW1vdW50IjoiMCIsImZpZnRoQm91Z2h0IjowLCJzaXh0aEJvdWdodCI6MCwic2V2ZW50aEJvdWdodCI6MCwiZWlnaHRCb3VnaHQiOjAsImZpcnN0UG93IjoiMSIsInNlY29uZFBvdyI6IjEiLCJ0aGlyZFBvdyI6IjEiLCJmb3VydGhQb3ciOiIxIiwiZmlmdGhQb3ciOiIxIiwic2l4dGhQb3ciOiIxIiwic2V2ZW50aFBvdyI6IjEiLCJlaWdodFBvdyI6IjEiLCJzYWNyaWZpY2VkIjoiMCIsImFjaGlldmVtZW50cyI6W10sImluZmluaXR5VXBncmFkZXMiOltdLCJjaGFsbGVuZ2VzIjpbXSwiY3VycmVudENoYWxsZW5nZSI6IiIsImluZmluaXR5UG9pbnRzIjoiMCIsImluZmluaXRpZWQiOjAsImluZmluaXRpZWRCYW5rIjowLCJ0b3RhbFRpbWVQbGF5ZWQiOjAsImJlc3RJbmZpbml0eVRpbWUiOjk5OTk5OTk5OTksInRoaXNJbmZpbml0eVRpbWUiOjAsInJlc2V0cyI6MCwiZ2FsYXhpZXMiOjAsInRpY2tEZWNyZWFzZSI6MC45LCJ0b3RhbG1vbmV5IjoiMCIsImFjaFBvdyI6IjEiLCJuZXdzQXJyYXkiOlsiYTEwOCIsImExMjAiLCJhNDciLCJhMjYiLCJhOTYiLCJhMjgiLCJhMTIiLCJhNDMiLCJhMzkiLCJhOTkiLCJhODUiLCJhNDEiLCJhNiIsImExMDciLCJhMzYiLCJhMjIiLCJhMTAiLCJhMTAwIiwiYTY1IiwiYTExOSIsImE5IiwiYTc3IiwiYTE0IiwiYTIwIiwiYTgiLCJhODkiLCJhOTMiLCJhMTIxIiwiYTY2IiwiYTI5IiwiYTk3Il0sImludGVydmFsIjpudWxsLCJsYXN0VXBkYXRlIjoxNTE5ODc0NTczNjkyLCJhdXRvYnV5ZXJzIjpbMSwyLDMsNCw1LDYsNyw4LDksMTAsMTEsMTJdLCJjb3N0TXVsdGlwbGllcnMiOlsiMTAwMCIsIjEwMDAwIiwiMTAwMDAwIiwiMTAwMDAwMCIsIjEwMDAwMDAwMCIsIjEwMDAwMDAwMDAwIiwiMTAwMDAwMDAwMDAwMCIsIjEwMDAwMDAwMDAwMDAwMDAiXSwidGlja3NwZWVkTXVsdGlwbGllciI6IjEwIiwiY2hhbGwyUG93IjoxLCJjaGFsbDNQb3ciOiIwLjAxIiwibWF0dGVyIjoiMCIsImNoYWxsMTFQb3ciOiIxIiwicGFydEluZmluaXR5UG9pbnQiOjAsInBhcnRJbmZpbml0aWVkIjowLCJicmVhayI6ZmFsc2UsImNoYWxsZW5nZVRpbWVzIjpbMjY3ODQwMDAsMjY3ODQwMDAsMjY3ODQwMDAsMjY3ODQwMDAsMjY3ODQwMDAsMjY3ODQwMDAsMjY3ODQwMDAsMjY3ODQwMDAsMjY3ODQwMDAsMjY3ODQwMDAsMjY3ODQwMDBdLCJpbmZjaGFsbGVuZ2VUaW1lcyI6WzI2Nzg0MDAwLDI2Nzg0MDAwLDI2Nzg0MDAwLDI2Nzg0MDAwLDI2Nzg0MDAwLDI2Nzg0MDAwLDI2Nzg0MDAwLDI2Nzg0MDAwXSwibGFzdFRlblJ1bnMiOltbMjY3ODQwMDAsIjEiXSxbMjY3ODQwMDAsIjEiXSxbMjY3ODQwMDAsIjEiXSxbMjY3ODQwMDAsIjEiXSxbMjY3ODQwMDAsIjEiXSxbMjY3ODQwMDAsIjEiXSxbMjY3ODQwMDAsIjEiXSxbMjY3ODQwMDAsIjEiXSxbMjY3ODQwMDAsIjEiXSxbMjY3ODQwMDAsIjEiXV0sImxhc3RUZW5FdGVybml0aWVzIjpbWzI2Nzg0MDAwLCIxIl0sWzI2Nzg0MDAwLCIxIl0sWzI2Nzg0MDAwLCIxIl0sWzI2Nzg0MDAwLCIxIl0sWzI2Nzg0MDAwLCIxIl0sWzI2Nzg0MDAwLCIxIl0sWzI2Nzg0MDAwLCIxIl0sWzI2Nzg0MDAwLCIxIl0sWzI2Nzg0MDAwLCIxIl0sWzI2Nzg0MDAwLCIxIl1dLCJpbmZNdWx0IjoiMSIsImluZk11bHRDb3N0IjoiMTAiLCJ0aWNrU3BlZWRNdWx0RGVjcmVhc2UiOjEwLCJ0aWNrU3BlZWRNdWx0RGVjcmVhc2VDb3N0IjozMDAwMDAwLCJkaW1lbnNpb25NdWx0RGVjcmVhc2UiOjEwLCJkaW1lbnNpb25NdWx0RGVjcmVhc2VDb3N0IjoxMDAwMDAwMDAsIm92ZXJYR2FsYXhpZXMiOjEwLCJ2ZXJzaW9uIjo5LjUsImluZkRpbWVuc2lvbnNVbmxvY2tlZCI6W2ZhbHNlLGZhbHNlLGZhbHNlLGZhbHNlLGZhbHNlLGZhbHNlLGZhbHNlLGZhbHNlXSwiaW5maW5pdHlQb3dlciI6IjEiLCJzcHJlYWRpbmdDYW5jZXIiOjAsInBvc3RDaGFsbFVubG9ja2VkIjowLCJwb3N0QzRUaWVyIjowLCJwb3N0QzNSZXdhcmQiOiIxIiwiZXRlcm5pdHlQb2ludHMiOiIwIiwiZXRlcm5pdGllcyI6MCwidGhpc0V0ZXJuaXR5IjowLCJiZXN0RXRlcm5pdHkiOjk5OTk5OTk5OTksImV0ZXJuaXR5VXBncmFkZXMiOltdLCJlcG11bHQiOiIxIiwiZXBtdWx0Q29zdCI6IjUwMCIsImluZmluaXR5RGltZW5zaW9uMSI6eyJjb3N0IjoiMTAwMDAwMDAwIiwiYW1vdW50IjoiMCIsImJvdWdodCI6MCwicG93ZXIiOiIxIiwiYmFzZUFtb3VudCI6MH0sImluZmluaXR5RGltZW5zaW9uMiI6eyJjb3N0IjoiMTAwMDAwMDAwMCIsImFtb3VudCI6IjAiLCJib3VnaHQiOjAsInBvd2VyIjoiMSIsImJhc2VBbW91bnQiOjB9LCJpbmZpbml0eURpbWVuc2lvbjMiOnsiY29zdCI6IjEwMDAwMDAwMDAwIiwiYW1vdW50IjoiMCIsImJvdWdodCI6MCwicG93ZXIiOiIxIiwiYmFzZUFtb3VudCI6MH0sImluZmluaXR5RGltZW5zaW9uNCI6eyJjb3N0IjoiMTAwMDAwMDAwMDAwMDAwMDAwMDAwIiwiYW1vdW50IjoiMCIsImJvdWdodCI6MCwicG93ZXIiOiIxIiwiYmFzZUFtb3VudCI6MH0sImluZmluaXR5RGltZW5zaW9uNSI6eyJjb3N0IjoiMWUrMTQwIiwiYW1vdW50IjoiMCIsImJvdWdodCI6MCwicG93ZXIiOiIxIiwiYmFzZUFtb3VudCI6MH0sImluZmluaXR5RGltZW5zaW9uNiI6eyJjb3N0IjoiMWUrMjAwIiwiYW1vdW50IjoiMCIsImJvdWdodCI6MCwicG93ZXIiOiIxIiwiYmFzZUFtb3VudCI6MH0sImluZmluaXR5RGltZW5zaW9uNyI6eyJjb3N0IjoiMWUrMjUwIiwiYW1vdW50IjoiMCIsImJvdWdodCI6MCwicG93ZXIiOiIxIiwiYmFzZUFtb3VudCI6MH0sImluZmluaXR5RGltZW5zaW9uOCI6eyJjb3N0IjoiMWUrMjgwIiwiYW1vdW50IjoiMCIsImJvdWdodCI6MCwicG93ZXIiOiIxIiwiYmFzZUFtb3VudCI6MH0sImluZkRpbUJ1eWVycyI6W2ZhbHNlLGZhbHNlLGZhbHNlLGZhbHNlLGZhbHNlLGZhbHNlLGZhbHNlLGZhbHNlXSwidGltZVNoYXJkcyI6IjAiLCJ0aWNrVGhyZXNob2xkIjoiMSIsInRvdGFsVGlja0dhaW5lZCI6MCwidGltZURpbWVuc2lvbjEiOnsiY29zdCI6IjEiLCJhbW91bnQiOiIwIiwicG93ZXIiOiIxIiwiYm91Z2h0IjowfSwidGltZURpbWVuc2lvbjIiOnsiY29zdCI6IjUiLCJhbW91bnQiOiIwIiwicG93ZXIiOiIxIiwiYm91Z2h0IjowfSwidGltZURpbWVuc2lvbjMiOnsiY29zdCI6IjEwMCIsImFtb3VudCI6IjAiLCJwb3dlciI6IjEiLCJib3VnaHQiOjB9LCJ0aW1lRGltZW5zaW9uNCI6eyJjb3N0IjoiMTAwMCIsImFtb3VudCI6IjAiLCJwb3dlciI6IjEiLCJib3VnaHQiOjB9LCJvZmZsaW5lUHJvZCI6MCwib2ZmbGluZVByb2RDb3N0IjoxMDAwMDAwMCwiY2hhbGxlbmdlVGFyZ2V0IjowLCJhdXRvU2FjcmlmaWNlIjoxLCJyZXBsaWNhbnRpIjp7ImFtb3VudCI6IjAiLCJ1bmwiOmZhbHNlLCJjaGFuY2UiOjAuMDEsImNoYW5jZUNvc3QiOiIxZSsxNTAiLCJpbnRlcnZhbCI6MTAwMCwiaW50ZXJ2YWxDb3N0IjoiMWUrMTQwIiwiZ2FsIjowLCJnYWxheGllcyI6MCwiZ2FsQ29zdCI6IjFlKzE3MCIsImF1dG8iOltmYWxzZSxmYWxzZSxmYWxzZV19LCJ0aW1lc3R1ZHkiOnsidGhlb3JlbSI6MCwiYW1jb3N0IjoiMWUrMjAwMDAiLCJpcGNvc3QiOiIxIiwiZXBjb3N0IjoiMSIsInN0dWRpZXMiOltdfSwiZXRlcm5pdHlDaGFsbHMiOnt9LCJldGVybml0eUNoYWxsR29hbCI6IjEuNzk3NjkzMTM0ODYyMzE1N2UrMzA4IiwiY3VycmVudEV0ZXJuaXR5Q2hhbGwiOiIiLCJldGVybml0eUNoYWxsVW5sb2NrZWQiOjAsImV0ZXJjcmVxIjowLCJhdXRvSVAiOiIwIiwiYXV0b1RpbWUiOjFlKzMwMCwiaW5mTXVsdEJ1eWVyIjpmYWxzZSwiYXV0b0NydW5jaE1vZGUiOiJhbW91bnQiLCJyZXNwZWMiOmZhbHNlLCJldGVybml0eUJ1eWVyIjp7ImxpbWl0IjoiMCIsImlzT24iOmZhbHNlfSwiZXRlcmM4aWRzIjo1MCwiZXRlcmM4cmVwbCI6NDAsImRpbWxpZmUiOnRydWUsImRlYWQiOnRydWUsIm9wdGlvbnMiOnsibmV3c0hpZGRlbiI6ZmFsc2UsIm5vdGF0aW9uIjoiU3RhbmRhcmQiLCJzY2llbnRpZmljIjpmYWxzZSwiY2hhbGxDb25mIjpmYWxzZSwic2FjcmlmaWNlQ29uZmlybWF0aW9uIjp0cnVlLCJyZXRyeUNoYWxsZW5nZSI6ZmFsc2UsImJ1bGtPbiI6dHJ1ZSwiY2xvdWQiOnRydWUsImhvdGtleXMiOnRydWUsInNlY3JldFRoZW1lS2V5IjowLCJldGVybml0eWNvbmZpcm0iOnRydWUsImNvbW1hcyI6dHJ1ZSwiY2hhcnQiOnsidXBkYXRlUmF0ZSI6MTAwMCwiZHVyYXRpb24iOjEwLCJ3YXJuaW5nIjowLCJvbiI6ZmFsc2V9LCJ0aGVtZXMiOiJOb3JtYWwiLCJ1cGRhdGVSYXRlIjo1MH19"))
+                    file.lastUpdate = new Date().getTime() //makes it as if you made a new save right when you open the page
+                }
+                document.getElementById("save").value = btoa(JSON.stringify(file))
+                load()
+            }
+            function load() {
+                localStorage.setItem("ADeditor",document.getElementById("save").value)
+                file = JSON.parse(atob(document.getElementById("save").value))
+                for (let i=0;i<varNames.length;i++) document.getElementById("b"+i).value = file[varNames[i]];
+                for (let i=0;i<8;i++) {
+                    for (let j=0;j<4;j++) {
+                        document.getElementById("d"+i+j).value = file[tierNames[i]+dimVals[j]]
+                        document.getElementById("di"+i+j).value = file["infinityDimension"+(i+1)][iDimVals[j]]
+                    }
+                    document.getElementById("dc"+i).value = file.costMultipliers[i]
+                    document.getElementById("diu"+i).checked = file.infDimensionsUnlocked[i]
+                    document.getElementById("dia"+i).checked = file.infDimBuyers[i]
+                }
+                for (let i=0;i<8;i++) {
+                    for (let j=0;j<4;j++) document.getElementById("dt"+i+j).value = file["timeDimension"+(i+1)][tDimVals[j]]
+                }
+                for (let i=0;i<13;i++) {
+                    for (let j=0;j<8;j++) document.getElementById("a"+i+j).checked = file.achievements.includes("r"+(i+1)+(j+1))
+                }
+                document.getElementById("cct").value = file.currentChallenge.includes("postc")?"p":"c"
+                if (document.getElementById("cct").value=="p") document.getElementById("ccn").value = file.currentChallenge.replace("postc","")
+                else if (file.currentChallenge=="") document.getElementById("ccn").value = 1
+                else document.getElementById("ccn").value = challOrder.indexOf(parseInt(file.currentChallenge.replace("challenge","")))+1
+                document.getElementById("cfs").value = file.challenges.includes("challenge1")
+                for (let i=0;i<11;i++) {
+                    document.getElementById("cf"+i).checked = file.challenges.includes("challenge"+challOrder[i+1])
+                    document.getElementById("ct"+i).value = file.challengeTimes[challOrder[i+1]-2]
+                }
+                for (let i=11;i<19;i++) {
+                    document.getElementById("cf"+i).checked = file.challenges.includes("postc"+(i-10))
+                    document.getElementById("ct"+i).value = file.infchallengeTimes[i-11]
+                }
+                for (let i=0;i<12;i++) {
+                    if (typeof file.autobuyers[i] == "number") {
+                        document.getElementById("cac"+i+0).checked = false
+                        continue;
+                    }
+                    document.getElementById("cac"+i+0).checked = true
+                    document.getElementById("cac"+i+1).checked = file.autobuyers[i].isOn
+                    for (let j=0;j<5;j++) {
+                        if (i==8 && j==4) break;
+                        document.getElementById("ca"+i+j).value = file.autobuyers[i][ABVals[j]]
+                    }
+                    if (i<9) document.getElementById("cam"+i).checked = file.autobuyers[i].target >= 10;
+                }
+                document.getElementById("cam9").value = file.overXGalaxies;
+                document.getElementById("cam11").value = file.autoCrunchMode;
+                document.getElementById("rce").checked = file.replicanti.unl;
+                for (let i=0;i<labelRep.length;i++) document.getElementById("r"+i).value = file.replicanti[repNames[i]]
+                for (let i=0;i<4;i++) document.getElementById("bt"+i).value = file.timestudy[studyNames[i]]
+                for (let i=0;i<studyId.length;i++) document.getElementById("bts"+i).checked = file.timestudy.studies.includes(studyId[i])
+                for (let i=1;i<=12;i++) {
+                    if (file.eternityChalls["eterc"+i] == undefined) document.getElementById("ce"+i).value = 0
+                    else document.getElementById("ce"+i).value = file.eternityChalls["eterc"+i]
+                }
+                for (let i=0;i<10;i++) {
+                    document.getElementById("spii"+i).value = file.lastTenRuns[i][1]
+                    document.getElementById("spid"+i).value = file.lastTenRuns[i][0]
+                    document.getElementById("spee"+i).value = file.lastTenEternities[i][1]
+                    document.getElementById("sped"+i).value = file.lastTenEternities[i][0]
+                }
+            }
+            function stringFilter(v) {
+                if (isFinite(parseFloat(v))) return parseFloat(v)
+                return v
+            }
+            function save() {
+                for (let i=0;i<varNames.length;i++) file[varNames[i]] = stringFilter(document.getElementById("b"+i).value)
+                for (let i=0;i<8;i++) {
+                    for (let j=0;j<4;j++) {
+                        file[tierNames[i]+dimVals[j]] = stringFilter(document.getElementById("d"+i+j).value)
+                        file["infinityDimension"+(i+1)][iDimVals[j]] = stringFilter(document.getElementById("di"+i+j).value)
+                    }
+                    file.costMultipliers[i] = stringFilter(document.getElementById("dc"+i).value)
+                    file.infDimensionsUnlocked[i] = document.getElementById("diu"+i).checked
+                    file.infDimBuyers[i] = document.getElementById("dia"+i).checked
+                }
+                for (let i=0;i<8;i++) {
+                    for (let j=0;j<4;j++) file["timeDimension"+(i+1)][tDimVals[j]] = stringFilter(document.getElementById("dt"+i+j).value)
+                }
+                file.achievements = []
+                for (let i=0;i<13;i++) {
+                    for (let j=0;j<8;j++) {
+                        if (document.getElementById("a"+i+j).checked) file.achievements.push("r"+(i+1)+(j+1))
+                    }
+                }
+                if (document.getElementById("cct").value=="p") file.currentChallenge = "postc"+document.getElementById("ccn").value
+                else if (document.getElementById("ccn").value==1) file.currentChallenge = ""
+                else file.currentChallenge = "challenge"+challOrder[document.getElementById("ccn").value-1]
+                if (document.getElementById("cfs").checked) file.challenges = ["challenge1"]
+                else file.challenges = []
+                for (let i=0;i<11;i++) {
+                    if (document.getElementById("cf"+i).checked) file.challenges.push("challenge"+challOrder[i+1])
+                    file.challengeTimes[challOrder[i+1]-2] = stringFilter(document.getElementById("ct"+i).value)
+                }
+                for (let i=11;i<19;i++) {
+                    if (document.getElementById("cf"+i).checked) file.challenges.push("postc"+(i-10))
+                    file.infchallengeTimes[i-11] = stringFilter(document.getElementById("ct"+i).value)
+                }
+                for (let i=0;i<12;i++) {
+                    if (!document.getElementById("cac"+i+0).checked) {
+                        file.autobuyers[i] = i+1
+                        continue;
+                    }
+                    file.autobuyers[i] = {
+                        isOn: document.getElementById("cac"+i+1).checked,
+                        tier: i+1
+                    }
+                    for (let j=0;j<5;j++) {
+                        if (i==8 && j==4) break;
+                        file.autobuyers[i][ABVals[j]] = stringFilter(document.getElementById("ca"+i+j).value)
+                    }
+                    if (i<9) file.autobuyers[i].target = (i+1)%9+document.getElementById("cam"+i).checked?10:0
+                }
+                file.overXGalaxies = stringFilter(document.getElementById("cam9").value)
+                file.autoCrunchMode = document.getElementById("cam11").value
+                file.replicanti.unl = document.getElementById("rce").checked;
+                for (let i=0;i<labelRep.length;i++) file.replicanti[repNames[i]] = parseFloat(document.getElementById("r"+i).value)
+                for (let i=0;i<3;i++) document.getElementById("rc"+i).checked = file.replicanti.auto[i]
+                file.timestudy[studyNames[0]] = stringFilter(document.getElementById("bt0").value)
+                for (let i=1;i<4;i++) file.timestudy[studyNames[i]] = document.getElementById("bt"+i).value
+                file.timestudy.studies = []
+                for (let i=0;i<studyId.length;i++) {
+                    if (document.getElementById("bts"+i).checked) file.timestudy.studies.push(studyId[i])
+                }
+                for (let i=1;i<=12;i++) {
+                    if (document.getElementById("ce"+i).value == 0) file.eternityChalls["eterc"+i] = undefined
+                    else file.eternityChalls["eterc"+i] = parseFloat(document.getElementById("ce"+i).value)
+                }
+                for (let i=0;i<10;i++) {
+                    file.lastTenRuns[i][1] = stringFilter(document.getElementById("spii"+i).value)
+                    file.lastTenRuns[i][0] = stringFilter(document.getElementById("spid"+i).value)
+                    file.lastTenEternities[i][1] = stringFilter(document.getElementById("spee"+i).value)
+                    file.lastTenEternities[i][0] = stringFilter(document.getElementById("sped"+i).value)
+                }
+
+                document.getElementById("save").value = btoa(JSON.stringify(file))
+                localStorage.setItem("ADeditor",document.getElementById("save").value)
+            }
+        </script>
+        <title>AD Save Editor</title>
+    </head>
+    <body onload="init()">
+        <textarea cols="150" placeholder="Your savefile" id="save"></textarea><br>
+        <button onclick="load()">Load save</button> <button onclick="save()">Save save</button>
+        <br id="base">
+        <table border="2px solid green" id="dt">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Cost</th>
+                    <th>Amount</th>
+                    <th>Multiplier</th>
+                    <th>Bought</th>
+                    <th>Cost Increase</th>
+                </tr>
+            </thead>
+        </table>
+        <table border="2px solid yellow" id="dit">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Unlocked</th>
+                    <th>Cost</th>
+                    <th>Bought</th>
+                    <th>Amount</th>
+                    <th>Power</th>
+                    <th>Autobuyer</th>
+                </tr>
+            </thead>
+        </table>
+        <table border="2px solid yellow" id="dtt">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Cost</th>
+                    <th>Amount</th>
+                    <th>Bought</th>
+                    <th>Power</th>
+                </tr>
+            </thead>
+        </table>
+        <div id="base2">Achievements</div>
+        <select id="cct">
+            <option value="c">Normal</option>
+            <option value="p">Infinity</option>
+        </select> Challenge <input type="number" min="1" max="12" id="ccn"></input>
+        <br>Cleared challenge 1? <input type="checkbox" id="cfs"></input>
+        <table border="2px solid black" id="ct">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Completed?</th>
+                    <th>Best Time</th>
+                </tr>
+            </thead>
+        </table>
+        <table border="2px solid black" id="cat">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Owned?</th>
+                    <th>Enabled?</th>
+                    <th>Cost</th>
+                    <th>Interval</th>
+                    <th>Priority</th>
+                    <th>Progress</th>
+                    <th>Bulk</th>
+                </tr>
+            </thead>
+        </table>
+        <select id="cam11">
+            <option value="amount">amount</option>
+            <option value="time">time</option>
+            <option value="relative">X times last crunch</option>
+        </select>
+        <b>Replicanti</b><br>
+        Unlocked? <input type="checkbox" id="rce"></input>
+        <br id="base4">
+        Purchased Studies:<br id="base3">
+        <br>
+        <span id="base5">EC times completed:</span>
+        <table border="2px solid black" id="spit">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>IP gain</th>
+                    <th>Run Time</th>
+                </tr>
+            </thead>
+        </table>
+        <table border="2px solid black" id="spet">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>EP gain</th>
+                    <th>Run Time</th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>
